@@ -6,8 +6,9 @@ namespace Delegate
 {
     public class EnemySpawner : MonoBehaviour
     {
-        public Transform orc;
-        public Transform troll;
+        public Transform target;
+        public GameObject orc;
+        public GameObject troll;
         public int minAmount = 0, maxAmount = 20;
         public float spawnRate = 1;
 
@@ -22,12 +23,12 @@ namespace Delegate
 
         void SpawnTroll(int amount)
         {
-            Instantiate(troll);
+            Instantiate(troll,target);
         }
 
         void SpawnOrc(int amount)
         {
-            Instantiate(orc);
+            Instantiate(orc,target);
         }
 
         void Update()
