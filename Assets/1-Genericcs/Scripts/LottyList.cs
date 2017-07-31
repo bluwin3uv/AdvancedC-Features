@@ -2,7 +2,6 @@
 
 namespace Generics
 {
-
     public class LottyList<T>
     {
         public T[] list;
