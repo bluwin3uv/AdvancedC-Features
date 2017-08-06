@@ -12,8 +12,13 @@ namespace Delegate
         public int minAmount = 0, maxAmount = 20;
         public float spawnRate = 1;
 
+        private int num;
+
         delegate void EnemyType(int amount);
         private List<EnemyType> types = new List<EnemyType>();
+
+        
+
 
         void Start()
         {
@@ -33,7 +38,14 @@ namespace Delegate
 
         void Update()
         {
+            num = Random.Range(minAmount, maxAmount);
+            StartCoroutine(Spawn());
+        }
 
+        IEnumerator Spawn()
+        {
+            types[num](1);
+            yield return new WaitForSeconds(spawnRate);
         }
     }
 }
