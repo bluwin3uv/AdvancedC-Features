@@ -5,7 +5,6 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
     public GUIStyle ty;
-    public Zombie zom;
     public Texture2D red;
     public Vector3 rayLoc;
     public float moveSpeed;
@@ -26,9 +25,8 @@ public class Player : MonoBehaviour
     public bool showEnemyHP;
     public bool isNear;
     public bool foundEnemy;
-    [Header("GUI Management")]
-    public Rect barBackground;
-    public Rect hpBar;
+    public CameraController cam;
+  
     
 	void Start ()
     {
@@ -48,7 +46,6 @@ public class Player : MonoBehaviour
         Debug.DrawRay(rayLoc + transform.position, transform.forward, Color.blue);
         if(Physics.Raycast(rayLoc+ transform.position,transform.forward,out hit))
         {
-            print(hit.transform.name);
             if(hit.transform.tag == "Enemy")
             {
                 print("an enemy");
@@ -59,30 +56,40 @@ public class Player : MonoBehaviour
                 foundEnemy = false;
             }
         }
-        if(foundEnemy && isNear)
-        {
-            showEnemyHP = true;
-            //StartCoroutine(ShowEnemyStats());
-        }
-        else
-        {
-            //StopCoroutine(ShowEnemyStats());
-            showEnemyHP = false;
-        }
-        
     }
 
     void OnTriggerEnter(Collider col)
     {
-        if(col.transform.name == "ShowHudRange")
+        if(col.transform.tag == "HitRange")
         {
             isNear = true;
         }
+        #region Camera Logic Manager
+        if (col.transform.name == cam.triggers[0].name)
+        {
+            cam.sec1to2 = false;
+            cam.sec2to1 = true;
+            cam.sec2to3 = false;
+        }
+        if(col.transform.name == cam.triggers[1].name)
+        {
+            cam.sec1to2 = true;
+            cam.sec2to1 = false;
+            cam.sec2to3 = false;       
+        }
+        if(col.transform.name == cam.triggers[2].name)
+        {
+            cam.sec1to2 = false;
+            cam.sec2to1 = false;
+            cam.sec2to3 = true;
+        }
+        #endregion
     }
+
 
     void OnTriggerExit(Collider col)
     {
-        if(col.transform.name == "ShowHudRange")
+        if(col.transform.tag == "HitRange")
         {
             isNear = false;
         }
@@ -102,10 +109,6 @@ public class Player : MonoBehaviour
             Quaternion rotation = Quaternion.LookRotation(rotDir);
             transform.rotation = Quaternion.Lerp(transform.rotation, rotation, rotationSmoothness);
         }
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            move.y = jumpForce;
-        }   
     }
 
     void Action()
@@ -120,17 +123,6 @@ public class Player : MonoBehaviour
             {
                 StartCoroutine(Block());
             }
-        }
-    }
-
-    void OnGUI()
-    {
-        float scw = Screen.width / 16;
-        float sch = Screen.height / 9;
-        if(showEnemyHP)
-        {
-            GUI.Box(new Rect(scw * barBackground.x, sch * barBackground.y, scw * barBackground.width, sch * barBackground.height), "");
-            GUI.Box(new Rect(scw * barBackground.x, sch * barBackground.y, zom.health * 30/ barBackground.width, sch * barBackground.height),"",ty);
         }
     }
 

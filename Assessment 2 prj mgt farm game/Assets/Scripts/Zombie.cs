@@ -18,6 +18,11 @@ public abstract class Zombie : MonoBehaviour
     public Transform target;
     private List<ActionFuntion> actFuncs = new List<ActionFuntion>();
     private NavMeshAgent agent;
+    public Color fullHealth;
+    public Color lowHealth;
+    [HideInInspector]
+    [Range(0, 1)]
+    public float colorlerp;
 
     void Awake()
     {

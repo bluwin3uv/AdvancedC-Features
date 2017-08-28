@@ -12,22 +12,42 @@ public class SanjayZombie : Zombie
     public GameObject attackBox;
     private float animLength = 0.4f;
     private bool isAttacking = false;
-    private bool isHit;
+    public bool isHit;
     private Animator dmgAnim;
+    public GameObject hpBar;
+    public GameObject healthbarheath;
+    private MeshRenderer barMat;
 
     private void Start()
     {
         dmgAnim = GetComponent<Animator>();
         bc = GetComponent<BoxCollider>();
+        barMat = healthbarheath.GetComponent<MeshRenderer>();
     }
 
     protected override void Update()
     {
+        if(player == null)
+        {
+            player = GameObject.FindGameObjectWithTag("Player");
+        }
+
+        barMat.material.color = Color.Lerp(lowHealth, fullHealth, colorlerp);
+        colorlerp = health / 10;
         dmgAnim.SetBool("Hit", isHit);
         base.Update();
         if(!isAttacking && IsCloseToTarget(attackRange))
         {
             StartCoroutine(Attack());
+        }
+        hpBar.transform.rotation = Quaternion.Euler(hpBar.transform.forward);
+        healthbarheath.transform.localScale = new Vector3( health/10f, healthbarheath.transform.localScale.y, healthbarheath.transform.localScale.z);
+        healthbarheath.transform.localPosition = new Vector3(-5 - health/-2, healthbarheath.transform.localPosition.y, healthbarheath.transform.localPosition.z);
+        if(health <= 0)
+        {
+            health = 0;
+            Destroy(gameObject,0.1f);
+            Destroy(hpBar);
         }
     }
 
@@ -56,6 +76,7 @@ public class SanjayZombie : Zombie
     IEnumerator GotHit()
     {
         isHit = true;
+        health -= 1;
         yield return new WaitForSeconds(animLength);
         isHit = false;
     }
